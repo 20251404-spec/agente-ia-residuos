@@ -12,10 +12,18 @@ st.set_page_config(
 st.title("🏗️ Agente IA: Inspección Normativa de Residuos en Obra")
 st.markdown("---")
 
-# Barra lateral para credenciales y configuración
+# Leer API Key desde Secrets de Streamlit Cloud
+api_key = st.secrets.get("GEMINI_API_KEY", "")
+
+# Barra lateral informativa
 with st.sidebar:
     st.header("⚙️ Configuración del Agente")
-    api_key = st.text_input("Ingresa tu API Key (Google AI Studio):", type="password")
+    
+    if api_key:
+        st.success("🟢 Conectado con Gemini 1.5 Flash")
+    else:
+        api_key = st.text_input("Ingresa tu API Key (Google AI Studio):", type="password")
+
     st.markdown("""
     **Marcos Normativos Inyectados:**
     * 📐 **Norma E.060:** Concreto Armado (Criterios de traslape, corrosión y reuso estructural de acero).
@@ -41,7 +49,6 @@ if api_key:
         if foto_subida and st.button("🔍 Evaluar bajo Norma E.060 y NTP 900.058", type="primary"):
             with st.spinner("Procesando características del material y consultando normativas..."):
                 
-                # Prompt estructurado con reglas de ingeniería
                 prompt = """
                 Eres un Ingeniero Civil Supervisor especialista en Control de Calidad y Gestión Ambiental en Obras (ODS 9 y 12).
                 Analiza la imagen adjunta y genera un dictamen técnico estructurado en Markdown con las siguientes secciones exactas:
@@ -72,4 +79,4 @@ if api_key:
         elif not foto_subida:
             st.info("👈 Sube una imagen en el panel izquierdo para habilitar el botón de análisis.")
 else:
-    st.warning("⚠️ Por favor, ingresa tu API Key en la barra lateral para activar el Agente de IA.")
+    st.warning("⚠️ No se detectó la API Key. Configúrala en los Secrets de Streamlit.")
